@@ -31,29 +31,29 @@ function runSearch() {
         .then(function (answer) {
             switch (answer.action) {
                 case "Find songs by artist":
-                    artistSearch();
+                    itemSearch();
                     break;
 
                 case "Find all artists who appear more than once":
-                    multiSearch();
+                    productSearch();
                     break;
 
                 case "Find data within a specific range":
-                    rangeSearch();
+                    departmentSearch();
                     break;
 
                 case "Search for a specific song":
-                    songSearch();
+                    priceSearch();
                     break;
 
                 case "Find artists with a top song and top album in the same year":
-                    songAndAlbumSearch();
+                    stockSearch();
                     break;
             }
         });
 }
 
-function ItemidSearch() {
+function itemSearch() {
     inquirer
         .prompt({
             name: "Item ID",
@@ -71,7 +71,7 @@ function ItemidSearch() {
         });
 }
 
-function multiSearch() {
+function productSearch() {
     var query = "SELECT artist FROM top5000 GROUP BY artist HAVING count(*) > 1";
     connection.query(query, function (err, res) {
         for (var i = 0; i < res.length; i++) {
@@ -81,7 +81,7 @@ function multiSearch() {
     });
 }
 
-function rangeSearch() {
+function departmentSearch() {
     inquirer
         .prompt([
             {
@@ -119,42 +119,13 @@ function rangeSearch() {
                         " || Product: " +
                         res[i].product +
                         " || Department: " +
-                        res[i].store +
+                        res[i].department +
                         " || Price: " +
                         res[i].price +
                         " || Quantity: " +
                         res[i].stock
                     );
                 }
-                runSearch();
-            });
-        });
-}
-
-function productSearch() {
-    inquirer
-        .prompt({
-            name: "Product",
-            type: "input",
-            message: "What are you looking for today?"
-        })
-        .then(function (answer) {
-            console.log(answer.product);
-            connection.query("SELECT * FROM top5000 WHERE ?", { product: answer.product }, function (err, res) {
-                console.log(
-                    "Position: " +
-                    res[0].position +
-                    " || Item Number: " +
-                    res[i].itemid +
-                    " || Product: " +
-                    res[i].product +
-                    " || Department: " +
-                    res[i].store +
-                    " || Price: " +
-                    res[i].price +
-                    " || Quantity: " +
-                    res[i].stock
-                );
                 runSearch();
             });
         });
@@ -165,10 +136,10 @@ function priceSearch() {
         .prompt({
             name: "Price",
             type: "input",
-            message: "Cost of product"
+            message: "This is the price"
         })
         .then(function (answer) {
-            console.log(answer.song);
+            console.log(answer.product);
             connection.query("SELECT * FROM top5000 WHERE ?", { price: answer.price }, function (err, res) {
                 console.log(
                     "Position: " +
@@ -178,7 +149,7 @@ function priceSearch() {
                     " || Product: " +
                     res[i].product +
                     " || Department: " +
-                    res[i].store +
+                    res[i].department +
                     " || Price: " +
                     res[i].price +
                     " || Quantity: " +
@@ -189,16 +160,16 @@ function priceSearch() {
         });
 }
 
-function productSearch() {
+function stockSearch() {
     inquirer
         .prompt({
-            name: "Product",
+            name: "Stock",
             type: "input",
-            message: "What are you looking for today?"
+            message: "Amount of product in store"
         })
         .then(function (answer) {
             console.log(answer.song);
-            connection.query("SELECT * FROM top5000 WHERE ?", { product: answer.product }, function (err, res) {
+            connection.query("SELECT * FROM top5000 WHERE ?", { price: answer.stock }, function (err, res) {
                 console.log(
                     "Position: " +
                     res[0].position +
@@ -207,49 +178,12 @@ function productSearch() {
                     " || Product: " +
                     res[i].product +
                     " || Department: " +
-                    res[i].store +
+                    res[i].department +
                     " || Price: " +
                     res[i].price +
                     " || Quantity: " +
                     res[i].stock
                 );
-                runSearch();
-            });
-        });
-}
-
-
-function songAndAlbumSearch() {
-    inquirer
-        .prompt({
-            name: "Department",
-            type: "input",
-            message: "What store would you like to search for?"
-        })
-        .then(function (answer) {
-            var query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
-            query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
-            query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year ";
-
-            connection.query(query, [answer.store, answer.store], function (err, res) {
-                console.log(res.length + " matches found!");
-                for (var i = 0; i < res.length; i++) {
-                    console.log(
-                        "Album Position: " +
-                        res[i].position +
-                        " || Item Number: " +
-                        res[i].itemid +
-                        " || Product: " +
-                        res[i].product +
-                        " || Department: " +
-                        res[i].store +
-                        " || Price: " +
-                        res[i].price +
-                        " || Quantity: " +
-                        res[i].stock
-                    );
-                }
-
                 runSearch();
             });
         });

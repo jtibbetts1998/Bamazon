@@ -3,11 +3,13 @@ CREATE database bamazon_DB;
 
 USE bamazon_DB;
 
-CREATE TABLE top5000 (
+CREATE TABLE products (
   position INT NOT NULL,
-  artist VARCHAR(100) NULL,
-  song VARCHAR(100) NULL,
-  year INT NULL,
+  item id INT AUTO_INCREMENT NULL,
+  product VARCHAR(100) NULL,
+  department INT NULL,
+  price 
+  stock 
   raw_total DECIMAL(10,4) NULL,
   raw_usa DECIMAL(10,4) NULL,
   raw_uk DECIMAL(10,4) NULL,
@@ -16,18 +18,4 @@ CREATE TABLE top5000 (
   PRIMARY KEY (position)
 );
 
-CREATE TABLE top_albums (
-  position INT NOT NULL,
-  artist VARCHAR(100) NULL,
-  album VARCHAR(100) NULL,
-  year INT NULL,
-  raw_total DECIMAL(10,4) NULL,
-  raw_usa DECIMAL(10,4) NULL,
-  raw_uk DECIMAL(10,4) NULL,
-  raw_eur DECIMAL(10,4) NULL,
-  raw_row DECIMAL(10,4) NULL,
-  PRIMARY KEY (position)
-);
-
-SELECT * FROM top5000;
-select * from top_albums;
+SELECT * FROM products;

@@ -1,6 +1,9 @@
+
+//
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
+//
 var connection = mysql.createConnection({
     host: "localhost",
     port: 8889,
@@ -9,11 +12,13 @@ var connection = mysql.createConnection({
     database: "bamazon_DB"
 });
 
+//
 connection.connect(function (err) {
     if (err) throw err;
     runSearch();
 });
 
+//
 function runSearch() {
     inquirer
         .prompt({
@@ -28,6 +33,7 @@ function runSearch() {
                 "How many items are in store"
             ]
         })
+//
         .then(function (answer) {
             switch (answer.action) {
                 case "What is the item id number":
@@ -53,6 +59,7 @@ function runSearch() {
         });
 }
 
+//
 function itemSearch() {
     inquirer
         .prompt({
@@ -60,6 +67,7 @@ function itemSearch() {
             type: "input",
             message: "What is the item id number?"
         })
+//
         .then(function (answer) {
             var query = "SELECT position, song, year FROM products WHERE ?";
             connection.query(query, { item: answer.item }, function (err, res) {
@@ -71,16 +79,18 @@ function itemSearch() {
         });
 }
 
+//
 function productSearch() {
     var query = "SELECT artist FROM products GROUP BY artist HAVING count(*) > 1";
     connection.query(query, function (err, res) {
         for (var i = 0; i < res.length; i++) {
-            console.log(res[i].artist);
+            console.log(res[i].product);
         }
         runSearch();
     });
 }
 
+//
 function departmentSearch() {
     inquirer
         .prompt([
@@ -96,6 +106,7 @@ function departmentSearch() {
                 }
             },
             {
+//
                 name: "end",
                 type: "input",
                 message: "Enter ending position: ",
@@ -107,6 +118,7 @@ function departmentSearch() {
                 }
             }
         ])
+//
         .then(function (answer) {
             var query = "SELECT position,item ID,product,department,price,quantity FROM products WHERE position BETWEEN ? AND ?";
             connection.query(query, [answer.start, answer.end], function (err, res) {
@@ -131,6 +143,7 @@ function departmentSearch() {
         });
 }
 
+//
 function priceSearch() {
     inquirer
         .prompt({
@@ -138,8 +151,9 @@ function priceSearch() {
             type: "input",
             message: "How much is the item"
         })
+//
         .then(function (answer) {
-            console.log(answer.product);
+            console.log(answer.price);
             connection.query("SELECT * FROM products WHERE ?", { price: answer.price }, function (err, res) {
                 console.log(
                     "Position: " +
@@ -160,6 +174,7 @@ function priceSearch() {
         });
 }
 
+//
 function stockSearch() {
     inquirer
         .prompt({
@@ -167,8 +182,9 @@ function stockSearch() {
             type: "input",
             message: "How many items are in store"
         })
+//
         .then(function (answer) {
-            console.log(answer.song);
+            console.log(answer.stock);
             connection.query("SELECT * FROM products WHERE ?", { price: answer.stock }, function (err, res) {
                 console.log(
                     "Position: " +

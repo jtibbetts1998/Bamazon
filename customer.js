@@ -2,6 +2,7 @@
 //
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 //
 var connection = mysql.createConnection({
@@ -26,7 +27,7 @@ function runSearch() {
             type: "rawlist",
             message: "What would you like to do?",
             choices: [
-                "What is the item id number",
+                "What is the item id number of the product you'd like to buy? ",
                 "Find the product",
                 "What department is the product in",
                 "How much is the item",
@@ -36,25 +37,25 @@ function runSearch() {
 //
         .then(function (answer) {
             switch (answer.action) {
-                case "What is the item id number":
+                case "What is the item id":
                     itemSearch();
                     break;
 
-                case "Find the product":
-                    productSearch();
-                    break;
+                // case "Find the product":
+                //     productSearch();
+                //     break;
 
-                case "What department is the product in":
-                    departmentSearch();
-                    break;
+                // case "What department is the product in":
+                //     departmentSearch();
+                //     break;
 
-                case "How much is the item":
-                    priceSearch();
-                    break;
+                // case "How much is the item":
+                //     priceSearch();
+                //     break;
 
-                case "How many items are in store":
-                    stockSearch();
-                    break;
+                // case "How many items are in store":
+                //     stockSearch();
+                //     break;
             }
         });
 }
@@ -63,17 +64,19 @@ function runSearch() {
 function itemSearch() {
     inquirer
         .prompt({
-            name: "Item ID",
+            name: "item",
             type: "input",
             message: "What is the item id number?"
         })
 //
         .then(function (answer) {
-            var query = "SELECT position, song, year FROM products WHERE ?";
-            connection.query(query, { item: answer.item }, function (err, res) {
+            var query = "SELECT * FROM products WHERE ?";
+            connection.query(query, { item_id: answer.item }, function (err, res) {
                 for (var i = 0; i < res.length; i++) {
                     console.log("Position: " + res[i].position + " || Item ID: " + res[i].itemid + " || Year: " + res[i].year);
                 }
+               
+                console.log(res)
                 runSearch();
             });
         });

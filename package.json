@@ -1,0 +1,24 @@
+{
+  "name": "12-mysql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "customer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jtibbetts1998/Bamazon.git"
+  },
+  "author": "Justin Tibbetts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jtibbetts1998/Bamazon/issues"
+  },
+  "homepage": "https://github.com/jtibbetts1998/Bamazon#readme",
+  "dependencies": {
+    "cli-table": "^0.3.1",
+    "inquirer": "^6.2.1",
+    "mysql": "^2.16.0"
+  }
+}

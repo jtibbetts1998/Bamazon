@@ -75,8 +75,6 @@ function itemSearch() {
                 for (var i = 0; i < res.length; i++) {
                     console.log("Position: " + res[i].position + " || Item ID: " + res[i].itemid + " || Year: " + res[i].year);
                 }
-               
-                console.log(res)
                 runSearch();
             });
         });

@@ -21,32 +21,32 @@ function runSearch() {
             type: "rawlist",
             message: "What would you like to do?",
             choices: [
-                "Find songs by artist",
-                "Find all artists who appear more than once",
-                "Find data within a specific range",
-                "Search for a specific song",
-                "Find artists with a top song and top album in the same year"
+                "What is the item id number",
+                "Find the product",
+                "What department is the product in",
+                "How much is the item",
+                "How many items are in store"
             ]
         })
         .then(function (answer) {
             switch (answer.action) {
-                case "Find songs by artist":
+                case "What is the item id number":
                     itemSearch();
                     break;
 
-                case "Find all artists who appear more than once":
+                case "Find the product":
                     productSearch();
                     break;
 
-                case "Find data within a specific range":
+                case "What department is the product in":
                     departmentSearch();
                     break;
 
-                case "Search for a specific song":
+                case "How much is the item":
                     priceSearch();
                     break;
 
-                case "Find artists with a top song and top album in the same year":
+                case "How many items are in store":
                     stockSearch();
                     break;
             }
@@ -58,13 +58,13 @@ function itemSearch() {
         .prompt({
             name: "Item ID",
             type: "input",
-            message: "What is the item number?"
+            message: "What is the item id number?"
         })
         .then(function (answer) {
-            var query = "SELECT position, song, year FROM top5000 WHERE ?";
+            var query = "SELECT position, song, year FROM products WHERE ?";
             connection.query(query, { item: answer.item }, function (err, res) {
                 for (var i = 0; i < res.length; i++) {
-                    console.log("Position: " + res[i].position + " || Item ID: " + res[i].item + " || Year: " + res[i].year);
+                    console.log("Position: " + res[i].position + " || Item ID: " + res[i].itemid + " || Year: " + res[i].year);
                 }
                 runSearch();
             });
@@ -72,7 +72,7 @@ function itemSearch() {
 }
 
 function productSearch() {
-    var query = "SELECT artist FROM top5000 GROUP BY artist HAVING count(*) > 1";
+    var query = "SELECT artist FROM products GROUP BY artist HAVING count(*) > 1";
     connection.query(query, function (err, res) {
         for (var i = 0; i < res.length; i++) {
             console.log(res[i].artist);
@@ -108,7 +108,7 @@ function departmentSearch() {
             }
         ])
         .then(function (answer) {
-            var query = "SELECT position,item ID,product,department,price,quantity FROM top5000 WHERE position BETWEEN ? AND ?";
+            var query = "SELECT position,item ID,product,department,price,quantity FROM products WHERE position BETWEEN ? AND ?";
             connection.query(query, [answer.start, answer.end], function (err, res) {
                 for (var i = 0; i < res.length; i++) {
                     console.log(
@@ -136,11 +136,11 @@ function priceSearch() {
         .prompt({
             name: "Price",
             type: "input",
-            message: "This is the price"
+            message: "How much is the item"
         })
         .then(function (answer) {
             console.log(answer.product);
-            connection.query("SELECT * FROM top5000 WHERE ?", { price: answer.price }, function (err, res) {
+            connection.query("SELECT * FROM products WHERE ?", { price: answer.price }, function (err, res) {
                 console.log(
                     "Position: " +
                     res[0].position +
@@ -165,11 +165,11 @@ function stockSearch() {
         .prompt({
             name: "Stock",
             type: "input",
-            message: "Amount of product in store"
+            message: "How many items are in store"
         })
         .then(function (answer) {
             console.log(answer.song);
-            connection.query("SELECT * FROM top5000 WHERE ?", { price: answer.stock }, function (err, res) {
+            connection.query("SELECT * FROM products WHERE ?", { price: answer.stock }, function (err, res) {
                 console.log(
                     "Position: " +
                     res[0].position +

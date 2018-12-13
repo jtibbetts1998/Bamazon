@@ -27,7 +27,7 @@ function runSearch() {
             type: "rawlist",
             message: "What would you like to do?",
             choices: [
-                "What is the item id number of the product you'd like to buy? ",
+                "",
                 "Find the product",
                 "What department is the product in",
                 "How much is the item",
@@ -37,9 +37,9 @@ function runSearch() {
 //
         .then(function (answer) {
             switch (answer.action) {
-                case "What is the item id":
-                    itemSearch();
-                    break;
+                //case "What is the item id":
+                    //itemSearch();
+                   // break;
 
                 // case "Find the product":
                 //     productSearch();
@@ -71,9 +71,9 @@ function itemSearch() {
 //
         .then(function (answer) {
             var query = "SELECT * FROM products WHERE ?";
-            connection.query(query, { item_id: answer.item }, function (err, res) {
+            connection.query(query, { item_id: answer.item_id }, function (err, res) {
                 for (var i = 0; i < res.length; i++) {
-                    console.log("Position: " + res[i].position + " || Item ID: " + res[i].itemid + " || Year: " + res[i].year);
+                    console.log("Position: " + res[i].position + " || Item ID: " + res[i].item_id + " || Year: " + res[i].year);
                 }
                 runSearch();
             });
@@ -128,7 +128,7 @@ function departmentSearch() {
                         "Position: " +
                         res[i].position +
                         " || Item ID: " +
-                        res[i].itemid +
+                        res[i].item_id +
                         " || Product: " +
                         res[i].product +
                         " || Department: " +
@@ -160,7 +160,7 @@ function priceSearch() {
                     "Position: " +
                     res[0].position +
                     " || Item Number: " +
-                    res[i].itemid +
+                    res[i].item_id +
                     " || Product: " +
                     res[i].product +
                     " || Department: " +
@@ -191,7 +191,7 @@ function stockSearch() {
                     "Position: " +
                     res[0].position +
                     " || Item Number: " +
-                    res[i].itemid +
+                    res[i].item_id +
                     " || Product: " +
                     res[i].product +
                     " || Department: " +

@@ -74,11 +74,13 @@ function addStore() {
             message: "How many units would you like to buy?"
         })
         .then(function (answer) {
-            connection.query("UPDATE products SET stock_quantity = ")
+            connection.query("SELECT * FROM products WHERE item_id = " + answer.postOrBid) {
+
             console.log(answer);
             // based on their answer, either call the Add or the View functions
             if (answer.addStore === "post") {
                 console.log(answer.addStore);
+
             }
         });
 }

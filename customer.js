@@ -1,63 +1,41 @@
-
-//
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var Table = require("cli-table");
 
-//
+// create the connection information for the sql database
 var connection = mysql.createConnection({
-    host: "localhost",
-    port: 8889,
-    user: "root",
-    password: "root",
-    database: "bamazon_DB"
+  host: "localhost",
+  port: 8889,
+  user: "root",
+  password: "root",
+  database: "bamazon_DB"
 });
 
-//
-connection.connect(function (err) {
-    if (err) throw err;
-    runSearch();
+
+// connect to the mysql server and sql database
+connection.connect(function(err) {
+  if (err) throw err;
+  // run the start function after the connection is made to prompt the user
+  start();
 });
 
-//
-function runSearch() {
-    inquirer
-        .prompt({
-            name: "action",
-            type: "rawlist",
-            message: "What would you like to do?",
-            choices: [
-                "",
-                "Find the product",
-                "What department is the product in",
-                "How much is the item",
-                "How many items are in store"
-            ]
-        })
-//
-        .then(function (answer) {
-            switch (answer.action) {
-                //case "What is the item id":
-                    //itemSearch();
-                   // break;
-
-                // case "Find the product":
-                //     productSearch();
-                //     break;
-
-                // case "What department is the product in":
-                //     departmentSearch();
-                //     break;
-
-                // case "How much is the item":
-                //     priceSearch();
-                //     break;
-
-                // case "How many items are in store":
-                //     stockSearch();
-                //     break;
-            }
-        });
+// function which prompts the user for what action they should take
+function start() {
+  inquirer
+    .prompt({
+      name: "postOrBid",
+      type: "rawlist",
+      message: "What would you like to do??",
+      choices: ["Add to Inventory/ Add New Product", "View Products for Sale/ View Low Inventory"]
+    })
+    .then(function(answer) {
+      // based on their answer, either call the Add or the View functions
+      if (answer.postOrBid.toUpperCase() === "Add ") {
+        AddStore();
+      }
+      else {
+        ViewStore();
+      }
+    });
 }
 
 //

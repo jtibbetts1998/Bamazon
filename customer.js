@@ -4,8 +4,14 @@ var inquirer = require("inquirer");
 // create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
+
+  // Your port; if not 3306
   port: 8889,
+
+  // Your username
   user: "root",
+
+  // Your password
   password: "root",
   database: "bamazon_DB"
 });
@@ -38,148 +44,122 @@ function start() {
     });
 }
 
-//
-function itemSearch() {
-    inquirer
-        .prompt({
-            name: "item",
-            type: "input",
-            message: "What is the item id number?"
-        })
-//
-        .then(function (answer) {
-            var query = "SELECT * FROM products WHERE ?";
-            connection.query(query, { item_id: answer.item_id }, function (err, res) {
-                for (var i = 0; i < res.length; i++) {
-                    console.log("Position: " + res[i].position + " || Item ID: " + res[i].item_id + " || Year: " + res[i].year);
-                }
-                runSearch();
-            });
-        });
-}
-
-//
-function productSearch() {
-    var query = "SELECT artist FROM products GROUP BY artist HAVING count(*) > 1";
-    connection.query(query, function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].product);
+// function to handle posting new items up for auction
+function AddStore() {
+  // prompt for info about the item being put up for auction
+  inquirer
+    .prompt([
+      {
+        name: "action",
+        type: "rawlist",
+        message: "Would you like to add to the inventory?"
+        choices: ["Add to Inventory"]
+      }
+      {
+        name: "Product",
+        type: "input",
+        message: "How many items are you adding?"
+      }
+    ])
+    .then(function(answer) {
+      // update inventory!!
+      connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: answer.product,
+          department_name: answer.department,
+          price: answer.price,
+          stock: answer.stock
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("");
+          // re-prompt the user for if they want to bid or post
+          start();
         }
-        runSearch();
+      );
     });
 }
 
-//
-function departmentSearch() {
+function ViewStore() {
+  // query the database for all items being auctioned
+  connection.query("SELECT * FROM products", function(err, results) {
+    if (err) throw err;
+    // once you have the items, prompt the user for which they'd like to bid on
     inquirer
-        .prompt([
-            {
-                name: "start",
-                type: "input",
-                message: "Enter starting position: ",
-                validate: function (value) {
-                    if (isNaN(value) === false) {
-                        return true;
-                    }
-                    return false;
-                }
-            },
-            {
-//
-                name: "end",
-                type: "input",
-                message: "Enter ending position: ",
-                validate: function (value) {
-                    if (isNaN(value) === false) {
-                        return true;
-                    }
-                    return false;
-                }
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices: function() {
+            var choiceArray = [];
+            for (var i = 0; i < results.length; i++) {
+              choiceArray.push(results[i].item_name);
             }
-        ])
-//
-        .then(function (answer) {
-            var query = "SELECT position,item ID,product,department,price,quantity FROM products WHERE position BETWEEN ? AND ?";
-            connection.query(query, [answer.start, answer.end], function (err, res) {
-                for (var i = 0; i < res.length; i++) {
-                    console.log(
-                        "Position: " +
-                        res[i].position +
-                        " || Item ID: " +
-                        res[i].item_id +
-                        " || Product: " +
-                        res[i].product +
-                        " || Department: " +
-                        res[i].department +
-                        " || Price: " +
-                        res[i].price +
-                        " || Quantity: " +
-                        res[i].stock
-                    );
-                }
-                runSearch();
-            });
-        });
+            return choiceArray;
+          },
+          message: "What auction would you like to place a bid in?"
+        },
+        {
+          name: "bid",
+          type: "input",
+          message: "How much would you like to bid?"
+        }
+      ])
+      .then(function(answer) {
+        // get the information of the chosen item
+        var chosenItem;
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].item_name === answer.choice) {
+            chosenItem = results[i];
+          }
+        }
+
+        // determine if bid was high enough
+        if (chosenItem.highest_bid < parseInt(answer.bid)) {
+          // bid was high enough, so update db, let the user know, and start over
+          connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+              {
+                highest_bid: answer.bid
+              },
+              {
+                id: chosenItem.id
+              }
+            ],
+            function(error) {
+              if (error) throw err;
+              console.log("Bid placed successfully!");
+              start();
+            }
+          );
+        }
+        else {
+          // bid wasn't high enough, so apologize and start over
+          console.log("Your bid was too low. Try again...");
+          start();
+        }
+      });
+  });
 }
 
-//
-function priceSearch() {
-    inquirer
-        .prompt({
-            name: "Price",
-            type: "input",
-            message: "How much is the item"
-        })
-//
-        .then(function (answer) {
-            console.log(answer.price);
-            connection.query("SELECT * FROM products WHERE ?", { price: answer.price }, function (err, res) {
-                console.log(
-                    "Position: " +
-                    res[0].position +
-                    " || Item Number: " +
-                    res[i].item_id +
-                    " || Product: " +
-                    res[i].product +
-                    " || Department: " +
-                    res[i].department +
-                    " || Price: " +
-                    res[i].price +
-                    " || Quantity: " +
-                    res[i].stock
-                );
-                runSearch();
-            });
-        });
-}
+//BAMAZON PSUEDO CODE
 
-//
-function stockSearch() {
-    inquirer
-        .prompt({
-            name: "Stock",
-            type: "input",
-            message: "How many items are in store"
-        })
-//
-        .then(function (answer) {
-            console.log(answer.stock);
-            connection.query("SELECT * FROM products WHERE ?", { price: answer.stock }, function (err, res) {
-                console.log(
-                    "Position: " +
-                    res[0].position +
-                    " || Item Number: " +
-                    res[i].item_id +
-                    " || Product: " +
-                    res[i].product +
-                    " || Department: " +
-                    res[i].department +
-                    " || Price: " +
-                    res[i].price +
-                    " || Quantity: " +
-                    res[i].stock
-                );
-                runSearch();
-            });
-        });
-}
+//require your dependencies (mysql, inquirer, cli-table)
+DONE
+//initialize a connection variable to sync with mysql db
+DONE
+//create a mysql connection and then call function(1)
+DONE
+//function(1): create a function that loads all the products using a sql SELECT * FROM products; then call function(2)
+
+//function(2): Prompts the user for the id of the product they want. (note:**The user input will come as a string. ) You must use parseInt() to turn the answer into a number-- save this to a variable. Call function(3)
+
+//function(3): Prompt user for a quantity. If given a quantity, store it into a variable, but make sure you parseInt() to turn it into a number. Call function(4) and pass this variable to function(4)
+
+//function(4): a function that makes a query connection. It should be a sql UPDATE statement.  Something like BUT NOT EXACTLY.... "UPDATE products SET stock = stock - ? WHERE id = ?", [? , ?]
+// if successful console.log (success!), else, call function(1)
+
+
+//************* obviously give your functions names.. but this is a basic outline of what your code should look like for the homework ************************

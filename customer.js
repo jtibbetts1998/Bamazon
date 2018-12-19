@@ -60,27 +60,27 @@ function postOrBid() {
             connection.query("SELECT * FROM products WHERE item_id = " + answer.postOrBid, function (err, res) {
                 if (err) throw err;
                 console.log(res);
-                addStore();
+               // addStore();
             })
             //select the id from the database and display sql SELECT statement
         })
 }
 
-function addStore() {
-    inquirer
-        .prompt({
-            name: "addStore",
-            type: "input",
-            message: "How many units would you like to buy?"
-        })
-        .then(function (answer) {
-            connection.query("SELECT * FROM products WHERE item_id = " + answer.postOrBid) {
+// function addStore() {
+//     inquirer
+//         .prompt({
+//             name: "addStore",
+//             type: "input",
+//             message: "How many units would you like to buy?"
+//         })
+//         .then(function (answer) {
+//             connection.query("SELECT * FROM products WHERE item_id = " + answer.postOrBid) {
 
-            console.log(answer);
-            // based on their answer, either call the Add or the View functions
-            if (answer.addStore === "post") {
-                console.log(answer.addStore);
+//             console.log(answer);
+//             // based on their answer, either call the Add or the View functions
+//             if (answer.addStore === "post") {
+//                 console.log(answer.addStore);
 
-            }
-        });
-}
+//             }
+//         })
+// }
